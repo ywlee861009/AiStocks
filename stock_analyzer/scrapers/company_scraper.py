@@ -1,0 +1,24 @@
+from .enums import ScrapeSource               # <-- [중요] 상대 경로
+from .naver_strategy import NaverFinanceStrategy  # <-- [중요] 상대 경로
+# from .daum_strategy import DaumFinanceStrategy # 나중에 추가할 위치
+
+class TopCompaniesScraper:
+    """
+    스크래핑 전략을 선택하고 실행하는 메인 컨트롤 타워 클래스
+    """
+    def __init__(self, top_n):
+        self.top_n = top_n
+        
+        self._strategies = {
+            ScrapeSource.NAVER_FINANCE: NaverFinanceStrategy
+            # ScrapeSource.DAUM_FINANCE: DaumFinanceStrategy
+        }
+        print(f"[TopCompaniesScraper] 초기화 완료: 상위 {self.top_n}개 대상")
+
+    def get_top_companies(self, source: ScrapeSource):
+        if source not in self._strategies:
+            raise ValueError(f"지원하지 않는 소스입니다: {source}")
+
+        StrategyClass = self._strategies[source]
+        strategy_instance = StrategyClass(self.top_n)
+        return strategy_instance.scrape()
