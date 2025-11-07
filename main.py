@@ -6,43 +6,13 @@ from stock_analyzer.scrapers.enums import CompanyScrapeSource, NewsFetchSource
 from stock_analyzer.scrapers.company.company_scraper import TopCompaniesScraper
 from stock_analyzer.scrapers.news.news_fetcher import NewsFetcher
 from stock_analyzer.logger import Logging
-
-
-def _get_env_int(var_name: str, default: int, *, aliases: tuple[str, ...] = ()) -> int:
-    """환경 변수(및 대체 이름)에서 정수 값을 안전하게 읽어옵니다."""
-    candidate_names = (var_name, *aliases)
-
-    for name in candidate_names:
-        value = os.environ.get(name)
-        if value is None:
-            continue
-
-        try:
-            parsed_value = int(value)
-            if parsed_value <= 0:
-                Logging.warning(
-                    f"환경 변수 '{name}' 값이 양의 정수가 아닙니다: {value!r}. 기본값 {default} 사용"
-                )
-                return default
-
-            if name != var_name:
-                Logging.info(
-                    f"환경 변수 '{name}' 값을 사용합니다. (우선순위: '{var_name}' -> {aliases})"
-                )
-            return parsed_value
-        except (TypeError, ValueError):
-            Logging.warning(
-                f"환경 변수 '{name}' 값이 정수가 아닙니다: {value!r}. 기본값 {default} 사용"
-            )
-            return default
-
-    return default
+from stock_analyzer.utils.env import get_env_int
 
 def run_step1():
     """1단계: Top N 기업 목록 가져오기"""
     Logging.info("--- 1단계: Top N 기업 목록 스크래핑 시작 ---")
     load_dotenv()
-    COMPANY_COUNT = _get_env_int('TOP_COMPANIES_COUNT', 10, aliases=('TOP_N',))
+    COMPANY_COUNT = get_env_int('TOP_COMPANIES_COUNT', 10, aliases=('TOP_N',))
     
     scraper = TopCompaniesScraper(top_n=COMPANY_COUNT)
     
@@ -73,7 +43,7 @@ def run_step2(company_list: list):
         return {} # 빈 딕셔너리 반환
 
     # .env에서 뉴스 개수(N)를 가져올 수도 있습니다.
-    NEWS_COUNT_PER_COMPANY = _get_env_int('NEWS_N', 20) # 20개
+    NEWS_COUNT_PER_COMPANY = get_env_int('NEWS_N', 20) # 20개
     
     fetcher = NewsFetcher(limit_per_company=NEWS_COUNT_PER_COMPANY)
     
