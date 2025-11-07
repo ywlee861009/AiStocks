@@ -3,7 +3,7 @@ import requests # Mock 객체로 대체될 예정
 from bs4 import BeautifulSoup
 
 # 우리가 테스트할 대상 (소스 코드)
-from stock_analyzer.scrapers.naver_strategy import NaverFinanceStrategy
+from stock_analyzer.scrapers.company.naver_strategy import NaverFinanceStrategy
 
 # --- 1. 가짜 데이터 준비 (Fixture) ---
 @pytest.fixture

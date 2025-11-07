@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 import json
 
 from stock_analyzer.scrapers.enums import CompanyScrapeSource, NewsFetchSource
-from stock_analyzer.scrapers.company_scraper import TopCompaniesScraper
-from stock_analyzer.scrapers.news_fetcher import NewsFetcher
+from stock_analyzer.scrapers.company.company_scraper import TopCompaniesScraper
+from stock_analyzer.scrapers.news.news_fetcher import NewsFetcher
 from stock_analyzer.logger import Logging
 
 def run_step1():

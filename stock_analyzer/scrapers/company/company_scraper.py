@@ -1,4 +1,4 @@
-from .enums import CompanyScrapeSource
+from ..enums import CompanyScrapeSource
 from .naver_strategy import NaverFinanceStrategy
 from stock_analyzer.logger import Logging
 # from .daum_strategy import DaumFinanceStrategy # 나중에 추가할 위치
