@@ -4,12 +4,14 @@ from dotenv import load_dotenv
 # [중요] 우리가 만든 패키지에서 클래스들을 import 합니다.
 from stock_analyzer.scrapers.company_scraper import TopCompaniesScraper
 from stock_analyzer.scrapers.enums import ScrapeSource
+from stock_analyzer.logger import Logging
 
 def run_step1():
     """
     1단계: Top N 기업 목록 가져오기 실행
     """
-    print("--- 1단계: Top N 기업 목록 스크래핑 시작 ---")
+    logging = Logging("Step1")
+    logging.info("--- 1단계: Top N 기업 목록 스크래핑 시작 ---")
     
     # 1. .env 파일에서 환경 변수 로드
     load_dotenv()
@@ -25,18 +27,18 @@ def run_step1():
         top_companies = scraper.get_top_companies(ScrapeSource.NAVER_FINANCE)
         
         if top_companies:
-            print(f"\n[결과] KOSPI 시가총액 TOP {len(top_companies)} (Source: NAVER)")
+            logging.success(f"KOSPI 시가총액 TOP {len(top_companies)} (Source: NAVER)")
             for index, company in enumerate(top_companies, 1):
-                print(f"{index}. {company}")
-            print("----------------------------------------")
+                logging.info(f"{index}. {company}")
+            logging.info("----------------------------------------")
             return top_companies # 2단계를 위해 결과를 반환합니다.
         else:
-            print("[결과] 스크래핑에 실패했거나 데이터가 없습니다.")
-            print("----------------------------------------")
+            logging.warning("스크래핑에 실패했거나 데이터가 없습니다.")
+            logging.info("----------------------------------------")
             return []
 
     except ValueError as e:
-        print(e)
+        logging.error(str(e))
         return []
 
 # --- 이 스크립트를 직접 실행했을 때만 아래 코드가 동작 ---

@@ -15,11 +15,11 @@ class NaverFinanceStrategy(BaseScraperStrategy):
             soup = BeautifulSoup(response.content, 'html.parser', from_encoding='euc-kr')
             return soup
         except requests.exceptions.RequestException as e:
-            print(f"오류: 웹페이지를 가져오는 데 실패했습니다 - {e}")
+            self.logging.error(f"웹페이지를 가져오는 데 실패했습니다 - {e}")
             return None
 
     def scrape(self):
-        print(f"[NaverFinanceStrategy] 상위 {self.top_n}개 기업 스크래핑 시작...")
+        self.logging.info(f"상위 {self.top_n}개 기업 스크래핑 시작...")
         soup = self._fetch_page()
         if soup is None:
             return []
@@ -34,8 +34,8 @@ class NaverFinanceStrategy(BaseScraperStrategy):
                 if len(company_list) == self.top_n:
                     break
             
-            print(f"[NaverFinanceStrategy] 성공: {len(company_list)}개 기업 목록을 가져왔습니다.")
+            self.logging.success(f"{len(company_list)}개 기업 목록을 가져왔습니다.")
             return company_list
         except Exception as e:
-            print(f"오류: 데이터 파싱 중 문제가 발생했습니다 - {e}")
+            self.logging.error(f"데이터 파싱 중 문제가 발생했습니다 - {e}")
             return []

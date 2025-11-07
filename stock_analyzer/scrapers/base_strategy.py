@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from stock_analyzer.logger import Logging
 
 class BaseScraperStrategy(ABC):
     """
@@ -9,7 +10,8 @@ class BaseScraperStrategy(ABC):
         self.HEADERS = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
-        print(f"[{self.__class__.__name__}] 준비 완료: 상위 {self.top_n}개 대상")
+        self.logging = Logging(self.__class__.__name__)
+        self.logging.info(f"준비 완료: 상위 {self.top_n}개 대상")
 
     @abstractmethod
     def scrape(self):
