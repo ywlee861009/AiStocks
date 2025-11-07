@@ -1,45 +1,80 @@
 import os
 from dotenv import load_dotenv
+import json
 
-# [중요] 우리가 만든 패키지에서 클래스들을 import 합니다.
+from stock_analyzer.scrapers.enums import CompanyScrapeSource, NewsFetchSource
 from stock_analyzer.scrapers.company_scraper import TopCompaniesScraper
-from stock_analyzer.scrapers.enums import ScrapeSource
+from stock_analyzer.scrapers.news_fetcher import NewsFetcher
 from stock_analyzer.logger import Logging
 
 def run_step1():
-    """
-    1단계: Top N 기업 목록 가져오기 실행
-    """
-    Logging.info("--- 1단계: Top N 기업 목록 스크래핑 시작 ---", name="Step1")
-    
-    # 1. .env 파일에서 환경 변수 로드
+    """1단계: Top N 기업 목록 가져오기"""
+    Logging.info("--- 1단계: Top N 기업 목록 스크래핑 시작 ---")
     load_dotenv()
-    
-    # 2. 'TOP_N' 환경 변수 읽기 (값이 없으면 기본값 '10' 사용)
     COMPANY_COUNT = os.environ.get('TOP_N', 10)
     
-    # 3. 메인 스크래퍼 객체 생성
     scraper = TopCompaniesScraper(top_n=COMPANY_COUNT)
     
-    # 4. 스크래핑 실행 (네이버 금융 소스)
     try:
-        top_companies = scraper.get_top_companies(ScrapeSource.NAVER_FINANCE)
+        # [수정] Enum 이름 변경
+        top_companies = scraper.get_top_companies(CompanyScrapeSource.NAVER_FINANCE) 
         
         if top_companies:
-            Logging.success(f"KOSPI 시가총액 TOP {len(top_companies)} (Source: NAVER)", name="Step1")
+            Logging.success(f"KOSPI TOP {len(top_companies)} (Source: NAVER)")
             for index, company in enumerate(top_companies, 1):
-                Logging.info(f"{index}. {company}", name="Step1")
-            Logging.info("----------------------------------------", name="Step1")
-            return top_companies # 2단계를 위해 결과를 반환합니다.
+                Logging.info(f"{index}. {company}")
+            Logging.info("----------------------------------------")
+            return top_companies
         else:
-            Logging.warning("스크래핑에 실패했거나 데이터가 없습니다.", name="Step1")
-            Logging.info("----------------------------------------", name="Step1")
+            Logging.error("스크래핑 실패")
+            Logging.info("----------------------------------------")
             return []
-
     except ValueError as e:
-        Logging.error(str(e), name="Step1")
+        Logging.error(str(e))
         return []
+
+def run_step2(company_list: list):
+    """2단계: 기업별 뉴스 RSS 피드 가져오기"""
+    Logging.info("--- 2단계: 기업별 뉴스 RSS 피드 가져오기 시작 ---")
+    if not company_list:
+        Logging.warning("기업 목록이 없어 2단계를 건너뜁니다.")
+        Logging.info("----------------------------------------")
+        return {} # 빈 딕셔너리 반환
+
+    # .env에서 뉴스 개수(N)를 가져올 수도 있습니다.
+    NEWS_COUNT_PER_COMPANY = int(os.environ.get('NEWS_N', 20)) # 20개
+    
+    fetcher = NewsFetcher(limit_per_company=NEWS_COUNT_PER_COMPANY)
+    
+    all_news_results = {}
+    
+    # 1단계에서 받은 기업 리스트를 순회
+    for company in company_list:
+        news_list = fetcher.get_news(company, NewsFetchSource.GOOGLE_NEWS_RSS)
+        all_news_results[company] = news_list # {'삼성전자': [...뉴스 리스트...], ...}
+    
+    Logging.success("모든 기업의 뉴스 수집 완료.")
+    Logging.info("----------------------------------------")
+    return all_news_results
 
 # --- 이 스크립트를 직접 실행했을 때만 아래 코드가 동작 ---
 if __name__ == "__main__":
-    run_step1()
+    
+    # 1단계 실행
+    top_companies_list = run_step1()
+    
+    # 2단계 실행
+    all_news_data = run_step2(top_companies_list)
+    
+    # 2단계 최종 결과 요약 출력
+    if all_news_data:
+        Logging.info("[최종 요약 (2단계 완료)]")
+        for company, news_list in all_news_data.items():
+            Logging.info(f"  > '{company}': {len(news_list)}개 뉴스 수집 완료")
+            
+        # 3단계를 위해 전체 결과를 JSON으로 간단히 출력해보기
+        # (json.dumps는 딕셔너리를 예쁜 문자열로 만들어줍니다)
+        Logging.info("[3단계로 넘어갈 데이터 샘플 (첫 번째 기업)]")
+        if top_companies_list:
+            first_company = top_companies_list[0]
+            Logging.info(json.dumps(all_news_data[first_company][:2], indent=2, ensure_ascii=False))

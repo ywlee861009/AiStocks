@@ -1,5 +1,5 @@
-from .enums import ScrapeSource               # <-- [중요] 상대 경로
-from .naver_strategy import NaverFinanceStrategy  # <-- [중요] 상대 경로
+from .enums import CompanyScrapeSource
+from .naver_strategy import NaverFinanceStrategy
 from stock_analyzer.logger import Logging
 # from .daum_strategy import DaumFinanceStrategy # 나중에 추가할 위치
 
@@ -11,12 +11,12 @@ class TopCompaniesScraper:
         self.top_n = top_n
         
         self._strategies = {
-            ScrapeSource.NAVER_FINANCE: NaverFinanceStrategy
+            CompanyScrapeSource.NAVER_FINANCE: NaverFinanceStrategy
             # ScrapeSource.DAUM_FINANCE: DaumFinanceStrategy
         }
         Logging.info(f"초기화 완료: 상위 {self.top_n}개 대상", name=self.__class__.__name__)
 
-    def get_top_companies(self, source: ScrapeSource):
+    def get_top_companies(self, source: CompanyScrapeSource):
         if source not in self._strategies:
             raise ValueError(f"지원하지 않는 소스입니다: {source}")
 

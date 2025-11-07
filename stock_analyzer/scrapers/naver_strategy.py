@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from .base_strategy import BaseScraperStrategy  # <-- [중요] 상대 경로로 변경
+from .base_strategy import BaseScraperStrategy
 from stock_analyzer.logger import Logging
 
 class NaverFinanceStrategy(BaseScraperStrategy):
