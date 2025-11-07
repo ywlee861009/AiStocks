@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from .base_strategy import BaseScraperStrategy  # <-- [중요] 상대 경로로 변경
+from stock_analyzer.logger import Logging
 
 class NaverFinanceStrategy(BaseScraperStrategy):
     """
@@ -15,11 +16,11 @@ class NaverFinanceStrategy(BaseScraperStrategy):
             soup = BeautifulSoup(response.content, 'html.parser', from_encoding='euc-kr')
             return soup
         except requests.exceptions.RequestException as e:
-            self.logging.error(f"웹페이지를 가져오는 데 실패했습니다 - {e}")
+            Logging.error(f"웹페이지를 가져오는 데 실패했습니다 - {e}", name=self.__class__.__name__)
             return None
 
     def scrape(self):
-        self.logging.info(f"상위 {self.top_n}개 기업 스크래핑 시작...")
+        Logging.info(f"상위 {self.top_n}개 기업 스크래핑 시작...", name=self.__class__.__name__)
         soup = self._fetch_page()
         if soup is None:
             return []
@@ -34,8 +35,8 @@ class NaverFinanceStrategy(BaseScraperStrategy):
                 if len(company_list) == self.top_n:
                     break
             
-            self.logging.success(f"{len(company_list)}개 기업 목록을 가져왔습니다.")
+            Logging.success(f"{len(company_list)}개 기업 목록을 가져왔습니다.", name=self.__class__.__name__)
             return company_list
         except Exception as e:
-            self.logging.error(f"데이터 파싱 중 문제가 발생했습니다 - {e}")
+            Logging.error(f"데이터 파싱 중 문제가 발생했습니다 - {e}", name=self.__class__.__name__)
             return []

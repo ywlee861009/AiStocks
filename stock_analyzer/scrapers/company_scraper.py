@@ -9,13 +9,12 @@ class TopCompaniesScraper:
     """
     def __init__(self, top_n):
         self.top_n = top_n
-        self.logging = Logging(self.__class__.__name__)
         
         self._strategies = {
             ScrapeSource.NAVER_FINANCE: NaverFinanceStrategy
             # ScrapeSource.DAUM_FINANCE: DaumFinanceStrategy
         }
-        self.logging.info(f"초기화 완료: 상위 {self.top_n}개 대상")
+        Logging.info(f"초기화 완료: 상위 {self.top_n}개 대상", name=self.__class__.__name__)
 
     def get_top_companies(self, source: ScrapeSource):
         if source not in self._strategies:

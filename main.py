@@ -10,8 +10,7 @@ def run_step1():
     """
     1단계: Top N 기업 목록 가져오기 실행
     """
-    logging = Logging("Step1")
-    logging.info("--- 1단계: Top N 기업 목록 스크래핑 시작 ---")
+    Logging.info("--- 1단계: Top N 기업 목록 스크래핑 시작 ---", name="Step1")
     
     # 1. .env 파일에서 환경 변수 로드
     load_dotenv()
@@ -27,18 +26,18 @@ def run_step1():
         top_companies = scraper.get_top_companies(ScrapeSource.NAVER_FINANCE)
         
         if top_companies:
-            logging.success(f"KOSPI 시가총액 TOP {len(top_companies)} (Source: NAVER)")
+            Logging.success(f"KOSPI 시가총액 TOP {len(top_companies)} (Source: NAVER)", name="Step1")
             for index, company in enumerate(top_companies, 1):
-                logging.info(f"{index}. {company}")
-            logging.info("----------------------------------------")
+                Logging.info(f"{index}. {company}", name="Step1")
+            Logging.info("----------------------------------------", name="Step1")
             return top_companies # 2단계를 위해 결과를 반환합니다.
         else:
-            logging.warning("스크래핑에 실패했거나 데이터가 없습니다.")
-            logging.info("----------------------------------------")
+            Logging.warning("스크래핑에 실패했거나 데이터가 없습니다.", name="Step1")
+            Logging.info("----------------------------------------", name="Step1")
             return []
 
     except ValueError as e:
-        logging.error(str(e))
+        Logging.error(str(e), name="Step1")
         return []
 
 # --- 이 스크립트를 직접 실행했을 때만 아래 코드가 동작 ---
