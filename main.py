@@ -20,7 +20,7 @@ def run_step1():
     scraper = TopCompaniesScraper(top_n=COMPANY_COUNT)
     
     try:
-        # [수정] Enum 이름 변경
+        # [수정] Enum 이름 변경ㅔ
         top_companies = scraper.get_top_companies(CompanyScrapeSource.NAVER_FINANCE) 
         
         if top_companies:
