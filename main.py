@@ -2,6 +2,9 @@ import os
 from dotenv import load_dotenv
 import json
 
+from typing import Optional
+from savers.base_saver import BaseSaver
+from savers.file_saver import FileSaver
 from stock_analyzer.scrapers.enums import CompanyScrapeSource, NewsFetchSource
 from stock_analyzer.scrapers.company.company_scraper import TopCompaniesScraper
 from stock_analyzer.scrapers.news.news_fetcher import NewsFetcher
@@ -58,6 +61,18 @@ def run_step2(company_list: list):
     Logging.info("----------------------------------------")
     return all_news_results
 
+def run_step3(all_news_data: dict, output_path: str = "data.json", saver: Optional[BaseSaver] = None) -> str:
+    """3단계: 수집된 데이터를 저장. saver가 주어지지 않으면 FileSaver 사용."""
+    Logging.info("--- 3단계: 수집된 데이터를 저장합니다 ---")
+    if not all_news_data:
+        Logging.warning("저장할 데이터가 없습니다.")
+        return ""
+    saver = saver or FileSaver()
+    saved_path = saver.save(all_news_data, output_path)
+    Logging.success(f"데이터가 저장되었습니다: {saved_path}")
+    Logging.info("----------------------------------------")
+    return saved_path
+
 # --- 이 스크립트를 직접 실행했을 때만 아래 코드가 동작 ---
 if __name__ == "__main__":
     
@@ -79,3 +94,6 @@ if __name__ == "__main__":
         if top_companies_list:
             first_company = top_companies_list[0]
             Logging.info(json.dumps(all_news_data[first_company][:2], indent=2, ensure_ascii=False))
+
+    # 새로 추가된 3단계: 파일로 저장 (기본 경로: data.json)
+    run_step3(all_news_data, output_path="data.json")
