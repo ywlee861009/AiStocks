@@ -56,34 +56,3 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
-
-## 프로젝트 구조
-
-```
-AiStocks/
-├── README.md
-├── requirements.txt
-├── .env
-├── venv/
-└── src/
-    ├── models/
-    ├── utils/
-    └── main.py
-```
-
-## 기술 스택
-
-- Python 3.x
-- 주요 라이브러리: (requirements.txt 참조)
-
-## 라이선스
-
-MIT License
-
-## 기여하기
-
-프로젝트에 기여하고 싶으시다면 Pull Request를 보내주세요!
-
-## 문의
-
-프로젝트 관련 문의사항이 있으시면 Issue를 등록해주세요.
