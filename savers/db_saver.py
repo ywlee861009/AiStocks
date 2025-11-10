@@ -4,6 +4,7 @@ from typing import Any, Dict
 from datetime import datetime
 from dotenv import load_dotenv
 from .base_saver import BaseSaver
+from stock_analyzer.logger import Logging
 
 # 환경변수 로드
 load_dotenv()
@@ -101,5 +102,5 @@ class DynamoDBSaver(BaseSaver):
             self.table.delete_item(Key={'id': item_id})
             return True
         except Exception as e:
-            print(f"삭제 실패: {e}")
+            Logging.error(f"삭제 실패: {e}")
             return False
