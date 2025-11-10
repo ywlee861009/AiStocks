@@ -1,6 +1,6 @@
 from ..enums import NewsFetchSource
 from .google_news_strategy import GoogleNewsRssStrategy
-from stock_analyzer.logger import Logging
+from utils.logger import Logging
 # 나중에 네이버 뉴스 RSS 전략 등을 추가할 수 있습니다.
 
 class NewsFetcher:

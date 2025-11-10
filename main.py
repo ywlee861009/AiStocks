@@ -8,8 +8,8 @@ from savers.file_saver import FileSaver
 from stock_analyzer.scrapers.enums import CompanyScrapeSource, NewsFetchSource
 from stock_analyzer.scrapers.company.company_scraper import TopCompaniesScraper
 from stock_analyzer.scrapers.news.news_fetcher import NewsFetcher
-from stock_analyzer.logger import Logging
-from stock_analyzer.utils.env import get_env_int
+from utils.logger import Logging
+from utils.env import get_env_int
 
 def run_step1():
     """1단계: Top N 기업 목록 가져오기"""

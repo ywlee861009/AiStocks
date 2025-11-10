@@ -1,6 +1,6 @@
 import os
 
-from stock_analyzer.logger import Logging
+from utils.logger import Logging
 
 
 def get_env_int(var_name: str, default: int, *, aliases: tuple[str, ...] = ()) -> int:

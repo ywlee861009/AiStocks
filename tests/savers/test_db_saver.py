@@ -1,7 +1,7 @@
 """DynamoDBSaver 테스트 스크립트"""
 
 from savers.db_saver import DynamoDBSaver
-from stock_analyzer.logger import Logging
+from utils.logger import Logging
 from datetime import datetime
 
 def test_dynamodb_saver():

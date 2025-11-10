@@ -4,7 +4,7 @@ from typing import Any, Dict
 from datetime import datetime
 from dotenv import load_dotenv
 from .base_saver import BaseSaver
-from stock_analyzer.logger import Logging
+from utils.logger import Logging
 
 # 환경변수 로드
 load_dotenv()
